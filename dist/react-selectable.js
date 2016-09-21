@@ -146,6 +146,17 @@ return /******/ (function(modules) { // webpackBootstrap
 			return _this;
 		}
 
+		function getAbsoluteCoordinates (e){
+				if ($('.modal-dialog').length > 0){
+					var offsetVertical = e.pageY - parseInt($('.modal-dialog').css('margin-top')) - document.body.scrollTop;
+					var offsetHorizontal = e.pageX - parseInt($('.modal-dialog').css('margin-left'));
+				}
+				return{
+					x: !!offsetVertical ? offsetHorizontal : e.pageX,
+					y: !!offsetHorizontal ? offsetVertical : e.pageY
+				}
+		}
+
 		_createClass(SelectableGroup, [{
 			key: 'getChildContext',
 			value: function getChildContext() {
@@ -192,15 +203,16 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: '_openSelector',
 			value: function _openSelector(e) {
-				var w = Math.abs(this._mouseDownData.initialW - e.pageX);
-				var h = Math.abs(this._mouseDownData.initialH - e.pageY);
+				var absoluteCoordinates = getAbsoluteCoordinates(e);
+				var w = Math.abs(this._mouseDownData.initialW - absoluteCoordinates.x);
+				var h = Math.abs(this._mouseDownData.initialH - absoluteCoordinates.y);
 
 				this.setState({
 					isBoxSelecting: true,
 					boxWidth: w,
 					boxHeight: h,
-					boxLeft: Math.min(e.pageX, this._mouseDownData.initialW),
-					boxTop: Math.min(e.pageY, this._mouseDownData.initialH)
+					boxLeft: Math.min(absoluteCoordinates.x, this._mouseDownData.initialW),
+					boxTop: Math.min(absoluteCoordinates.y, this._mouseDownData.initialH)
 				});
 
 				if (this.props.selectOnMouseMove) this._throttledSelect(e);
@@ -214,9 +226,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: '_mouseDown',
 			value: function _mouseDown(e) {
+				var absoluteCoordinates = getAbsoluteCoordinates(e);
 				// Disable if target is control by react-dnd
 				if (!!e.target.draggable) return;
-
 				var node = _reactDom2.default.findDOMNode(this);
 				var collides = void 0,
 				    offsetData = void 0,
@@ -234,8 +246,8 @@ return /******/ (function(modules) { // webpackBootstrap
 						bottom: offsetData.offsetHeight,
 						right: offsetData.offsetWidth
 					}, {
-						top: e.pageY,
-						left: e.pageX,
+						top: absoluteCoordinates.y,
+						left: absoluteCoordinates.x,
 						offsetWidth: 0,
 						offsetHeight: 0
 					});
@@ -243,12 +255,11 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 
 				this._mouseDownData = {
-					boxLeft: e.pageX,
-					boxTop: e.pageY,
-					initialW: e.pageX,
-					initialH: e.pageY
+					boxLeft: absoluteCoordinates.x,
+					boxTop: absoluteCoordinates.y,
+					initialW: absoluteCoordinates.x,
+					initialH: absoluteCoordinates.y,
 				};
-
 				if (this.props.preventDefault) e.preventDefault();
 
 				_reactDom2.default.findDOMNode(this).addEventListener('mousemove', this._openSelector);
