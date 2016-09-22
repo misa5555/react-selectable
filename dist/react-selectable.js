@@ -277,6 +277,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				if (!this._mouseDownData) return;
 
+				if (!this.state.isBoxSelecting) {
+					var absoluteCoordinates = getAbsoluteCoordinates(e);
+					this.setState({
+						isBoxSelecting: true,
+						boxWidth: 0.01,
+						boxHeight: 0.01,
+						boxLeft: absoluteCoordinates.x,
+						boxTop: absoluteCoordinates.y
+					});
+				}
 				this._selectElements(e);
 
 				this._mouseDownData = null;
