@@ -149,7 +149,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		function getAbsoluteCoordinates (e){
 				if ($('.modal-dialog').length > 0){
 					var offsetVertical = e.pageY - parseInt($('.modal-dialog').css('margin-top')) - document.body.scrollTop;
-					var offsetHorizontal = e.pageX - parseInt($('.modal-dialog').css('margin-left'));
+					var offsetHorizontal = e.pageX - parseInt($('.modal-dialog').css('margin-left')) - document.body.scrollLeft;
 				}
 				return{
 					x: !!offsetVertical ? offsetHorizontal : e.pageX,
